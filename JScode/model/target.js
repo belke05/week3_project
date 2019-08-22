@@ -9,8 +9,8 @@ export default class Target {
     this.boardWidth = boardWidth;
     this.boardHeight = boardHeight;
     // this wil be the location of the player relative on the board
-    this.x = 450;
-    this.y = 450;
+    this.x = boardWidth - this.targetcontainX;
+    this.y = boardHeight - this.targetcontainY;
     this.direction = "";
   }
 

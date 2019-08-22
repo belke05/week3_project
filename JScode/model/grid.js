@@ -1,6 +1,3 @@
-// inside of a module we can export the functions and variables that we need
-// just include their names inside the export
-// export {}
 export default class Grid {
   constructor(boardX, boardY, color, gridSize) {
     this.boardX = boardX;

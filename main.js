@@ -5,8 +5,8 @@ import Obstacle from "./JScode/model/obstacle.js";
 import Countdown from "./JScode/view/countdown.js";
 
 // ------------------ global variables
-let widthObjects = 50;
-let heightObjects = 50;
+let widthObjects = 60;
+let heightObjects = 60;
 let gridWidth = widthObjects * 10;
 // this way we can say we want a 10 by 10 grid for our player to move in
 let gridHeight = heightObjects * 10;
@@ -16,24 +16,22 @@ const failAudio = new Audio("./music/failed.mp3");
 const nextLevelAudio = new Audio("./music/good.mp3");
 const winAudio = new Audio("./music/levelCompleted.mp3");
 let playElement;
-let playerRange;
 let currentLevel = 1;
 // margin from obstacle
 // otherwise it will register things for hit that dont seem to be hit on screen
-let obstacleMarginPerSide = 10;
-let timeLimitPerLevel = [20, 15, 15, 10];
+let timeLimitPerLevel = [20, 15, 15, 10, 10, 10];
 let firstPress = true;
 let ArrayForObstacles = {
   level1: [
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
-    [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 1, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ],
   level2: [
@@ -42,35 +40,59 @@ let ArrayForObstacles = {
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
     [0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0, 0, 0, 1, 0, 0],
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 1, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ],
   level3: [
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 1, 1, 0, 0, 1, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
     [0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
+    [0, 0, 1, 0, 0, 1, 0, 0, 1, 0],
+    [0, 0, 1, 1, 0, 1, 0, 1, 0, 0],
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
   ],
   level4: [
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 0, 0, 0],
     [0, 1, 0, 1, 0, 1, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 1, 1, 0, 1, 1, 0, 1, 0, 0],
+    [0, 1, 1, 0, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 1, 1, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  ],
+  level5: [
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 1, 0, 1, 1, 0, 0, 1, 0, 1],
+    [0, 1, 0, 0, 0, 0, 0, 1, 0, 1],
+    [0, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+    [0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 1, 0, 1, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 1, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+  ],
+  level6: [
+    [0, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+    [0, 1, 0, 1, 0, 1, 0, 0, 0, 1],
+    [0, 1, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 1, 0, 1, 0, 0],
+    [0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 1, 1, 0],
+    [1, 0, 1, 0, 0, 1, 1, 1, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
+    [0, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+    [0, 0, 1, 0, 0, 1, 0, 1, 0, 0]
   ]
 };
 // ------------------
@@ -85,12 +107,7 @@ let player = new Player(
   board.boardX,
   board.boardY
 );
-let target = new Target(
-  widthObjects,
-  heightObjects,
-  board.boardX,
-  board.boardY
-);
+let target = new Target(widthObjects, heightObjects, gridWidth, gridHeight);
 let obstacle = new Obstacle(widthObjects, heightObjects);
 let countdown = new Countdown(timeLimitPerLevel[0]);
 let obstacles;
@@ -148,69 +165,16 @@ function checkForLocationMatch() {
   // we need to check for each of the obstacles if it overlaps with the players current position
   let check = false;
   obstacles.forEach(obstacle => {
-    let obstacleRange = [
-      [
-        obstacle.offsetLeft + obstacleMarginPerSide,
-        obstacle.offsetLeft + widthObjects - obstacleMarginPerSide
-      ],
-      // this can be done without the object because values will stay same
-      // obstacle margin is so that the hit detection is not to strict
-      [
-        obstacle.offsetTop + obstacleMarginPerSide,
-        obstacle.offsetTop + heightObjects - obstacleMarginPerSide
-      ]
-    ];
     playElement = document.getElementById("player");
-    playerRange = [
-      [playElement.offsetLeft, playElement.offsetLeft + widthObjects], // get this via the object because this value will change
-      [playElement.offsetTop, playElement.offsetTop + heightObjects]
-    ];
-    if (checkIfInRange(obstacleRange, playerRange)) {
-      // console.log("hit an obstacle");
+    if (
+      Math.abs(obstacle.offsetLeft - playElement.offsetLeft) <
+        widthObjects - 18 &&
+      Math.abs(obstacle.offsetTop - playElement.offsetTop) < heightObjects - 18
+    ) {
       check = true;
     }
   });
   return check;
-}
-
-// // function that looks if we reach our target or not
-// function checkIfTargetReached() {
-//   let targ = document.getElementById("target");
-//   let targetRange = [
-//     [targ.offsetLeft, targ.offsetLeft + widthObjects],
-//     [targ.offsetTop, targ.offsetTop + heightObjects]
-//   ];
-//   playElement = document.getElementById("player");
-//   playerRange = [
-//     [playElement.offsetLeft, playElement.offsetLeft + widthObjects], // get this via the object because this value will change
-//     [playElement.offsetTop, playElement.offsetTop + heightObjects]
-//   ];
-//   if (checkIfInRange(targetRange, playerRange)) {
-//     // console.log("hit an obstacle");
-//     return true;
-//   } else {
-//     return false;
-//   }
-// }
-
-function checkIfInRange(Arr1, Arr2) {
-  // take in two array on first index of each array the ranges for x are described
-  // on second index the ranges for y are described
-  // if they fall in the same range this returns true
-
-  if (
-    (Arr1[0][0] > Arr2[0][0] && Arr1[0][0] < Arr2[0][1]) ||
-    (Arr1[0][1] > Arr2[0][0] && Arr1[0][1] < Arr2[0][1])
-  ) {
-    if (
-      (Arr1[1][0] > Arr2[1][0] && Arr1[1][0] < Arr2[1][1]) ||
-      (Arr1[1][1] > Arr2[1][0] && Arr1[1][1] < Arr2[1][1])
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 // function to fire when a target has been hit

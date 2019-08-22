@@ -46,26 +46,3 @@ export default class Countdown {
     document.getElementById("game_container").appendChild(bar);
   }
 }
-
-// const timeLimit = 10;
-// // i want to gradually diminish the bars width
-// const timeLimitMsec = timeLimit * 100;
-
-// let MsecCounter = 0;
-// let barToDiminish = document.getElementById("bartoDiminish");
-// let ratio;
-
-// function createBar() {
-//   let bar = document.createElement("div");
-//   bar.id = "bartoReveal";
-//   let bar2 = document.createElement("div");
-//   bar2.id = "bartoDiminish";
-//   bar2.className = "good";
-//   bar.appendChild(bar2);
-//   return bar;
-// }
-// {
-//   /* <div id="bartoReveal">
-//               <div id="bartoDiminish" class="good"></div>
-// </div> */
-// }
